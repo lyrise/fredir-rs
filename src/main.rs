@@ -21,7 +21,7 @@ struct Opts {
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     let opts = Opts::parse();
-    println!("Copying from {} to {}", opts.from, opts.to);
+    println!("Moving from {} to {}", opts.from, opts.to);
 
     let _ = fs::create_dir(&opts.to);
 
@@ -50,7 +50,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
             let file_name = path.file_name().unwrap().to_string_lossy();
             let new_path = dest_dir.join(file_name.into_owned());
-            fs::rename(path, &new_path)?;
+            fs::copy(&path, &new_path)?;
+            fs::remove_file(&path)?;
             println!("move: {:?}", new_path);
         }
 
