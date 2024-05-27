@@ -48,8 +48,17 @@ async fn main() -> Result<(), Box<dyn Error>> {
                 continue;
             }
 
-            let file_name = path.file_name().unwrap().to_string_lossy();
-            let new_path = dest_dir.join(file_name.into_owned());
+            let mut new_path =
+                dest_dir.join(path.file_name().unwrap().to_string_lossy().to_string());
+            let mut index = 0;
+
+            while new_path.is_file() {
+                let stem = path.file_stem().unwrap().to_string_lossy().to_string();
+                let ext = path.extension().unwrap().to_string_lossy().to_string();
+                new_path.set_file_name(format!("{}_{}.{}", stem, index, ext));
+                index += 1;
+            }
+
             fs::copy(&path, &new_path)?;
             fs::remove_file(&path)?;
             println!("move: {:?}", new_path);
