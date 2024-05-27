@@ -40,12 +40,11 @@ async fn main() -> Result<(), Box<dyn Error>> {
                 continue;
             }
 
-            files.insert(path.clone());
-
             let count = map.entry(path.clone()).or_insert(0);
             *count += 1;
 
             if *count < opts.wait {
+                files.insert(path.clone());
                 continue;
             }
 
